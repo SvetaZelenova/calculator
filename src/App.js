@@ -1,23 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useReducer } from "react";
+import {
+  calculatorReducer,
+  initialState,
+  operators,
+  numbers,
+} from "./utils/utils";
+import Button from "./Button";
 
 function App() {
+  const [state, dispatch] = useReducer(calculatorReducer, initialState);
+
+  const operatorInputHandler = (op) => {
+    dispatch({ type: "OPERATOR", value: op });
+  };
+  const numberInputHandler = (num) => {
+    dispatch({ type: "OPERAND", value: num });
+  };
+  const clearAllHandler = () => {
+    dispatch({ type: "CLEAR" });
+  };
+  const equalHandler = () => {
+    dispatch({ type: "EQUALS" });
+  };
+
+  const operatorsContent = operators.map((op) => {
+    return (
+      <Button
+        key={op}
+        sign={op}
+        className="operator"
+        onPress={operatorInputHandler.bind(null, op)}
+      />
+    );
+  });
+
+  const numbersContent = numbers.map((num) => {
+    return (
+      <Button
+        key={num}
+        sign={num}
+        className="number"
+        onPress={numberInputHandler.bind(null, num)}
+      />
+    );
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="calculator__field">
+      <input readOnly className="input" value={state.result} />
+
+      <div className="buttons">
+        {operatorsContent}
+        {numbersContent}
+        <Button sign={"C"} className="clear" onPress={clearAllHandler} />
+        <Button sign={"="} className="equal-sign" onPress={equalHandler} />
+      </div>
     </div>
   );
 }
